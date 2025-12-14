@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>🏗️ Locação Construtora PRO</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background: linear-gradient(135deg,#f5f7fa 0%,#c3cfe2 100%); min-height: 100vh; }
+    .container { max-width: 420px; margin: 0 auto; padding: 20px 20px 80px; }
+    .titulo { font-size: 24px; font-weight: 800; text-align: center; margin: 10px 0 10px; background: linear-gradient(45deg,#3498db,#2c3e50); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .subtitulo { font-size: 12px; text-align: center; margin-bottom: 10px; color: #555; }
+    .role-badge { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; margin: 4px; cursor: pointer; border: 1px solid #3498db22; }
+    .role-active { background: #eaf3ff; color: #1f6feb; border-color: #1f6feb; }
+    .card { background: white; padding: 18px; border-radius: 16px; margin-bottom: 14px; box-shadow: 0 6px 18px rgba(0,0,0,0.08); }
+    .card h3 { font-size: 18px; font-weight: 700; margin-bottom: 10px; color: #2c3e50; }
+    .total { font-size: 24px; font-weight: 900; color: #27ae60; margin-top: 6px; }
+    .btn { padding: 12px; border-radius: 12px; text-align: center; font-weight: 600; font-size: 14px; border: none; width: 100%; margin: 6px 0; cursor: pointer; }
+    .btn-primary { background: linear-gradient(45deg,#3498db,#2980b9); color: #fff; }
+    .btn-secondary { background: #ecf0f1; color: #2c3e50; border: 1px solid #bdc3c7; }
+    .metrics { display: flex; justify-content: space-around; margin: 10px 0 15px; gap: 6px; }
+    .metric { flex: 1; text-align: center; background: white; padding: 10px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .metric-number { font-size: 20px; font-weight: 700; }
+    .metric-number.green { color: #27ae60; }
+    .metric-number.blue { color: #3498db; }
+    .alerta { background: #fff3cd; padding: 10px; border-radius: 10px; color: #856404; font-weight: 600; font-size: 13px; border: 1px solid #ffe58a; margin-top: 6px; }
+    .list-item { background: white; padding: 14px; border-radius: 14px; margin-bottom: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); cursor: default; }
+    .list-item h4 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .list-item p { font-size: 12px; color: #555; margin-bottom: 2px; }
+    .status-tag { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 10px; font-weight: 700; margin-top: 4px; }
+    .status-disponivel { background: #eafaf1; color: #27ae60; }
+    .status-alocado { background: #fdecea; color: #e74c3c; }
+    .status-manutencao { background: #fff4e5; color: #f39c12; }
+    .pill { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; background: #ecf0f1; margin-top: 4px; }
+    .equip-obra { font-size: 11px; margin-top: 4px; padding: 4px 8px; border-radius: 10px; background: #f7f9fc; }
+    .equip-obra span { display: block; }
+    nav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; display: flex; padding: 8px 10px; box-shadow: 0 -4px 14px rgba(0,0,0,0.12); }
+    .nav-item { flex: 1; text-align: center; padding: 8px; cursor: pointer; font-size: 11px; border-radius: 10px; }
+    .nav-item span { display: block; }
+    .nav-item.active { background: #eaf3ff; color: #1f6feb; font-weight: 700; }
+    .checklist-item { display: flex; align-items: flex-start; background: white; padding: 12px; border-radius: 12px; margin-bottom: 8px; box-shadow: 0 3px 10px rgba(0,0,0,0.05); cursor: pointer; }
+    .checklist-item.checked { background: #d4edda; border: 1px solid #27ae60; }
+    .check-mark { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #bbb; display: flex; align-items: center; justify-content: center; font-size: 12px; margin-right: 10px; margin-top: 2px; }
+    .checklist-item.checked .check-mark { background: #27ae60; color: #fff; border-color: #27ae60; }
+    textarea { width: 100%; border-radius: 10px; border: 1px solid #ccc; padding: 8px; font-size: 12px; resize: vertical; min-height: 60px; }
+    .section-title { font-size: 13px; font-weight: 700; margin: 6px 0 4px; color: #2c3e50; }
+    ul.history { list-style: none; font-size: 11px; margin-top: 6px; }
+    ul.history li { margin-bottom: 4px; }
+    .disabled-text { font-size: 11px; color: #888; margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <div id="app" class="container"></div>
+
+  <!-- MODAL ALOCAÇÃO / CADASTRO -->
+  <div id="alocacao-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);align-items:center;justify-content:center;z-index:9999;">
+    <div style="background:#fff;padding:16px;border-radius:12px;width:90%;max-width:420px;font-size:13px;">
+      <h3 id="alocacao-titulo" style="margin-bottom:8px;">Alocar equipamento</h3>
+      <div id="alocacao-conteudo"></div>
+      <div style="margin-top:10px;display:flex;gap:8px;">
+        <button class="btn btn-secondary" style="flex:1;" onclick="fecharAlocacao()">Cancelar</button>
+        <button class="btn btn-primary" style="flex:1;" onclick="confirmarAlocacao()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const appData = {
+      fornecedores: [
+        { id: 1, nome: 'Locadora Alfa', cnpj: '12.345.678/0001-00', telefone: '(19) 99999-0000', multaDiaria: 50 },
+        { id: 2, nome: 'EquipRent Beta', cnpj: '98.765.432/0001-11', telefone: '(19) 98888-1111', multaDiaria: 80 }
+      ],
+      obras: [
+        { 
+          id: 1,
+          nome: 'Residencial Y',
+          cnpj: '12.345.678/0001-00',
+          endereco: 'Rua das Flores, 123 - Indaiatuba/SP',
+          responsavel: 'João Silva',
+          duracaoDias: 180,
+          status: 'em andamento'
+        },
+        { 
+          id: 2,
+          nome: 'Galpão ABC',
+          cnpj: '98.765.432/0001-11',
+          endereco: 'Rod. Anhanguera km 98',
+          responsavel: 'Maria Santos',
+          duracaoDias: 240,
+          status: 'em andamento'
+        }
+      ],
+      equipamentos: [
+        // CONCRETAGEM
+        { id: 1, nome: 'Betoneira 400L', tipo: 'Betoneira', valorDiario: 120, status: 'disponivel', obraId: null, serie: 'BT-001', fornecedorId: 1, tipoCobranca: 'diaria', fotoUrl: '', obs: '', historico: [] },
+        { id: 2, nome: 'Betoneira 250L', tipo: 'Betoneira', valorDiario: 100, status: 'disponivel', obraId: null, serie: 'BT-002', fornecedorId: 1, tipoCobranca: 'diaria', fotoUrl: '', obs: '', historico: [] },
+        { id: 3, nome: 'Vibrador de Concreto 25mm', tipo: 'Vibrador', valorDiario: 80, status: 'disponivel', obraId: null, serie: 'VB-025', fornecedorId: 1, tipoCobranca: 'diaria', fotoUrl: '', obs: '', historico: [] },
+        { id: 4, nome: 'Vibrador de Concreto 38mm', tipo: 'Vibrador', valorDiario: 90, status: 'disponivel', obraId: null, serie: 'VB-038', fornecedorId: 1, tipoCobranca: 'diaria', fotoUrl: '', obs: '', historico: [] },
+        { id: 5, nome: 'Régua Vibratória 3m', tipo: 'Acabamento Concreto', valorDiario: 130, status: 'disponivel', obraId: null, serie: 'RV-3M', fornecedorId: 1, tipoCobranca: 'diaria', fotoUrl: '', obs: '', historico: [] },
+
+        // MOVIMENTAÇÃO / ELEVAÇÃO
+        { id: 6, nome: 'Plataforma Elevatória 8m', tipo: 'Plataforma', valorDiario: 300, status: 'disponivel', obraId: null, serie: 'PL-8M', fornecedorId: 2, tipoCobranca: 'diaria', fotoUrl: '', obs: '', historico: [] },
+        { id: 7, nome: 'Plataforma Tesoura 12m', tipo: 'Plataforma', valorDiario: 380, status: 'disponivel', obraId: null, serie: 'PL-12M', fornecedorId: 2, tipoCobranca: 'diaria', fotoUrl: '', obs: '', historico: [] },
+        { id: 8, nome: 'Guincho de Coluna 500kg', tipo: 'Guincho', valorDiario: 150, status: 'disponivel', obraId: null, serie: 'GC-500', fornecedorId: 2, tipoCobranca: 'diaria', fotoUrl: '', obs: '', historico: [] },
+        { id: 9, nome: 'Carrinho de Mão Reforçado', tipo: 'Transporte Interno', valorDiario: 20, status: 'disponivel', obraId: null, serie: 'CM-001', fornecedorId: 1, tipoCobranca: 'diaria', fotoUrl: '', obs: '', historico: [] },
+
+        // ANDAIMES / ESCORAMENTO
+        { id: 10, nome: 'Andaime Tubular (jogo)', tipo: 'Andaime', valorDiario: 50, status: 'disponivel', obraId: null, serie: 'AN-001', fornecedorId: 2, tipoCobranca: 'diaria', fotoUrl: '', obs: 'Valor por jogo/módulo', historico: [] },
+        { id: 11, nome: 'Andaime Fachadeiro (m²)', tipo: 'Andaime', valorDiario: 4, status: 'disponivel', obraId: null, serie: 'AF-001', fornecedorId: 2, tipoCobranca: 'diaria', fotoUrl: '', obs: 'Valor por m² montado', historico: [] },
+        { id: 12, nome: 'Escora Metálica Regulável', tipo: 'Escoramento', valorDiario: 8, status: 'disponivel', obraId: null, serie: 'ES-001', fornecedorId: 2, tipoCobranca: 'diaria', fotoUrl: '', obs: 'Valor unitário', historico: [] },
+        { id: 13, nome: 'Forma Metálica para Viga/Laje', tipo: 'Forma', valorDiario: 6, status: 'disponivel', obraId: null, serie: 'FO-001', fornecedorId: 2, tipoCobranca: 'diaria', fotoUrl: '', obs: 'Valor por m²', historico: [] },
+
+        // COMPACTAÇÃO / TERRAPLENAGEM LEVE
+        { id: 14, nome: 'Compactador de Solo (Sapo)', tipo: 'Compactador', valorDiario: 200, status: 'disponivel', obraId: null, serie: 'CS-01', fornecedorId: 1, tipoCobranca: 'diaria', fotoUrl: '', obs: '', historico: [] },
+        { id: 15, nome: 'Placa Vibratória', tipo: 'Compactador', valorDiario: 180, status: 'disponivel', obraId: null, serie: 'PV-01', fornecedorId: 1, tipoCobranca: 'diaria', fotoUrl: '', obs: '', historico: [] },
+
+        // CORTE / DEMOLIÇÃO / FURAÇÃO
+        { id: 16, nome: 'Martelete Rompedor 10kg', tipo: 'Martelete', valorDiario: 150, status: 'disponivel', obraId: null, serie: 'MR-10', fornecedorId: 2, tipoCobranca: 'diaria', fotoUrl: '', obs: '', historico: [] },
+        { id: 17, nome: 'Martelete Rompedor 5kg', tipo: 'Martelete', valorDiario: 110, status: 'disponivel', obraId: null, serie: 'MR-05', fornecedorId: 2, tipoCobranca: 'diaria', fotoUrl: '', obs: '', historico: [] },
+        { id: 18, nome: 'Serra Mármore 110mm', tipo: 'Serra', valorDiario: 70, status: 'disponivel', obraId: null, serie: 'SM-110', fornecedorId: 2, tipoCobranca: 'diaria', fotoUrl: '', obs: '', historico: [] },
+        { id: 19, nome: 'Esmerilhadeira 7"', tipo: 'Esmerilhadeira', valorDiario: 90, status: 'disponivel', obraId: null, serie: 'ESM-7', fornecedorId: 2, tipoCobranca: 'diaria', fotoUrl: '', obs: '', historico: [] },
+        { id: 20, nome: 'Furadeira de Impacto 1/2"', tipo: 'Furadeira', valorDiario: 60, status: 'disponivel', obraId: null, serie: 'FD-12', fornecedorId: 2, tipoCobranca: 'diaria', fotoUrl: '', obs: '', historico: [] },
+
+        // ENERGIA / ÁGUA / LIMPEZA
+        { id: 21, nome: 'Gerador 5kVA', tipo: 'Gerador', valorDiario: 250, status: 'disponivel', obraId: null, serie: 'GE-5', fornecedorId: 1, tipoCobranca: 'diaria', fotoUrl: '', obs: '', historico: [] },
+        { id: 22, nome: 'Compressor de Ar 200L', tipo: 'Compressor', valorDiario: 220, status: 'disponivel', obraId: null, serie: 'CP-200', fornecedorId: 1, tipoCobranca: 'diaria', fotoUrl: '', obs: '', historico: [] },
+        { id: 23, nome: 'Bomba d\'água Submersa', tipo: 'Bomba dágua', valorDiario: 90, status: 'disponivel', obraId: null, serie: 'BA-01', fornecedorId: 1, tipoCobranca: 'diaria', fotoUrl: '', obs: '', historico: [] },
+        { id: 24, nome: 'Lavadora de Alta Pressão', tipo: 'Limpeza', valorDiario: 120, status: 'disponivel', obraId: null, serie: 'LA-01', fornecedorId: 1, tipoCobranca: 'diaria', fotoUrl: '', obs: '', historico: [] }
+      ]
+    };
+
+    let currentScreen = 'dashboard';
+    let currentRole = 'admin';
+    let equipamentoEmDevolucaoId = null;
+
+    let checklist = { completo: false, limpo: false, horimetro: false, foto: false, assinatura: false };
+    let checklistObs = '';
+
+    let equipamentoEmAlocacaoId = null;
+    let alocacaoEstado = null;
+    let modoAlocacaoOuCadastro = 'alocacao'; // 'alocacao' ou 'cadastro'
+
+    function getObraNome(id) {
+      const o = appData.obras.find(x => x.id === id);
+      return o ? o.nome : '-';
+    }
+
+    function getFornecedor(id) {
+      return appData.fornecedores.find(f => f.id === id) || null;
+    }
+
+    function diffDias(inicio, fim) {
+      const d1 = new Date(inicio);
+      const d2 = new Date(fim);
+      return Math.ceil((d2 - d1) / (1000*60*60*24));
+    }
+
+    function addDays(date, days) {
+      const d = new Date(date);
+      d.setDate(d.getDate() + days);
+      return d;
+    }
+
+    // ===== CUSTOS: só equipamentos alocados em obra =====
+    function calcularFaturamento() {
+      let totalSemana = 0;
+      let totalMes = 0;
+
+      appData.equipamentos.forEach(eq => {
+        if (eq.status === 'alocado' && eq.obraId && eq.dataInicio && eq.dataFim) {
+          const dias = diffDias(eq.dataInicio, eq.dataFim);
+          const valorPeriodo = dias * (eq.valorDiario || 0);
+          totalMes += valorPeriodo;
+          totalSemana += valorPeriodo / 4;
+        }
+      });
+
+      return {
+        totalSemana: Math.round(totalSemana),
+        totalMes: Math.round(totalMes),
+        total: Math.round(totalSemana + totalMes)
+      };
+    }
+
+    function calcularCustosPorFornecedor() {
+      const custosPorFornecedor = {};
+
+      appData.equipamentos.forEach(eq => {
+        if (!(eq.status === 'alocado' && eq.obraId && eq.fornecedorId && eq.dataInicio && eq.dataFim)) {
+          return;
+        }
+        const forn = getFornecedor(eq.fornecedorId);
+        if (!forn) return;
+
+        if (!custosPorFornecedor[forn.id]) {
+          custosPorFornecedor[forn.id] = { nome: forn.nome, semana: 0, mes: 0, total: 0 };
+        }
+
+        const dias = diffDias(eq.dataInicio, eq.dataFim);
+        const valorPeriodo = dias * (eq.valorDiario || 0);
+
+        custosPorFornecedor[forn.id].mes += valorPeriodo;
+        custosPorFornecedor[forn.id].semana += valorPeriodo / 4;
+        custosPorFornecedor[forn.id].total =
+          custosPorFornecedor[forn.id].semana + custosPorFornecedor[forn.id].mes;
+      });
+
+      return custosPorFornecedor;
+    }
+
+    function resumoPorTipo() {
+      const tipos = {};
+      const hoje = new Date();
+      const diasMes = 30;
+
+      appData.equipamentos.forEach(eq => {
+        const tipo = eq.tipo || 'Outros';
+        if (!tipos[tipo]) {
+          tipos[tipo] = { custoMes: 0, diasUsados: 0 };
+        }
+        if (eq.dataInicio && eq.dataFim && eq.status === 'alocado') {
+          const inicio = new Date(eq.dataInicio);
+          const fim = new Date(eq.dataFim);
+          const usado = Math.max(0, Math.min(hoje, fim) - inicio);
+          const diasUsados = Math.ceil(usado / (1000*60*60*24));
+          const custo = diasUsados * eq.valorDiario;
+          tipos[tipo].custoMes += custo;
+          tipos[tipo].diasUsados += diasUsados;
+        }
+      });
+
+      return Object.keys(tipos).map(tipo => {
+        const info = tipos[tipo];
+        const utilizacao = Math.min(100, Math.round((info.diasUsados / diasMes) * 100));
+        return `
+          <p style="font-size:12px;">
+            <strong>${tipo}:</strong> R$ ${info.custoMes.toLocaleString()} / mês – ${utilizacao}% uso
+          </p>
+        `;
+      }).join('');
+    }
+
+    // ===== EXPORTAÇÃO CSV: por obra, com todos os dados =====
+    function gerarCSV() {
+      const linhas = [];
+
+      linhas.push([
+        'Obra',
+        'CNPJ Obra',
+        'Responsavel Obra',
+        'Duracao Obra (dias)',
+        'ID Equipamento',
+        'Nome Equipamento',
+        'Tipo Equipamento',
+        'Serie',
+        'Fornecedor',
+        'Tipo Cobranca',
+        'Valor Periodo (R$)',
+        'Status',
+        'Data Inicio',
+        'Data Fim (vencimento)',
+        'Dias Locados',
+        'Valor Total (R$)',
+        'Foto',
+        'Observacao',
+        'Obs Devolucao'
+      ].join(';'));
+
+      appData.equipamentos.forEach(eq => {
+        if (!eq.obraId && eq.status !== 'alocado') {
+          return;
+        }
+
+        const obra = appData.obras.find(o => o.id === eq.obraId) || {};
+        const forn = getFornecedor(eq.fornecedorId);
+
+        const dataInicio = eq.dataInicio || '';
+        const dataFim = eq.dataFim || '';
+
+        let dias = 0;
+        let valorTotal = 0;
+        if (dataInicio && dataFim) {
+          dias = diffDias(dataInicio, dataFim);
+          valorTotal = dias * (eq.valorDiario || 0);
+        }
+
+        linhas.push([
+          obra.nome || '',
+          obra.cnpj || '',
+          obra.responsavel || '',
+          obra.duracaoDias || '',
+          eq.id,
+          eq.nome,
+          eq.tipo || '',
+          eq.serie || '',
+          forn ? forn.nome : '',
+          eq.tipoCobranca || '',
+          eq.valorDiario || 0,
+          eq.status || '',
+          dataInicio,
+          dataFim,
+          dias,
+          valorTotal,
+          (eq.fotoUrl || '').replace(/;/g, ','),
+          (eq.obs || '').replace(/;/g, ','),
+          (eq.obsDevolucao || '').replace(/;/g, ',')
+        ].join(';'));
+      });
+
+      const csv = linhas.join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'locacoes_por_obra.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function renderRoleSelector() {
+      return `
+        <div style="text-align:center;margin-bottom:6px;">
+          <span class="role-badge ${currentRole==='engenheiro'?'role-active':''}" onclick="setRole('engenheiro')">👷 Engenheiro (obra)</span>
+          <span class="role-badge ${currentRole==='admin'?'role-active':''}" onclick="setRole('admin')">🏢 Administrativo</span>
+        </div>
+        <div class="subtitulo">
+          Perfil atual: ${currentRole === 'engenheiro' ? 'Focado em checklist e solicitações' : 'Focado em custos, fornecedores e relatórios'}
+        </div>
+      `;
+    }
+
+    function renderDashboard() {
+      const fat = calcularFaturamento();
+      const custosFornec = calcularCustosPorFornecedor();
+      const vencendo = appData.equipamentos.filter(eq => {
+        if (eq.status === 'alocado' && eq.dataFim) {
+          const diasRest = Math.ceil((new Date(eq.dataFim) - new Date()) / (1000*60*60*24));
+          return diasRest <= 7 && diasRest > 0;
+        }
+        return false;
+      });
+
+      let finCard = '';
+      let cardsFornec = '';
+      let resumoTiposCard = '';
+      let exportCard = '';
+
+      if (currentRole === 'admin') {
+        finCard = `
+          <div class="card">
+            <h3>💰 Custo de Locações</h3>
+            <p>Semana: R$ ${fat.totalSemana.toLocaleString()}</p>
+            <p>Mês: R$ ${fat.totalMes.toLocaleString()}</p>
+            <p class="total">TOTAL: R$ ${fat.total.toLocaleString()}</p>
+          </div>
+        `;
+
+        cardsFornec = Object.values(custosFornec).map(f => `
+          <div class="card">
+            <h3>💰 Custo por fornecedor – ${f.nome}</h3>
+            <p>Semana: R$ ${f.semana.toLocaleString('pt-BR')}</p>
+            <p>Mês: R$ ${f.mes.toLocaleString('pt-BR')}</p>
+            <p class="total">TOTAL: R$ ${f.total.toLocaleString('pt-BR')}</p>
+          </div>
+        `).join('');
+
+        resumoTiposCard = `
+          <div class="card">
+            <h3>📊 Resumo por tipo</h3>
+            ${resumoPorTipo()}
+          </div>
+        `;
+        exportCard = `
+          <div class="card">
+            <button class="btn btn-secondary" onclick="gerarCSV()">📤 Exportar CSV para Excel</button>
+          </div>
+        `;
+      }
+
+      const alertaCard = `
+        <div class="card">
+          <div class="alerta">
+            🚨 ${vencendo.length} equip. vencem em ≤ 7 dias
+          </div>
+          ${vencendo.slice(0,3).map(eq => `
+            <p style="margin-top:4px;font-size:11px;">${eq.nome} – ${getObraNome(eq.obraId)}</p>
+          `).join('')}
+        </div>
+      `;
+
+      const actionsCard = `
+        <div class="card">
+          ${currentRole === 'admin' ? `
+            <button class="btn btn-primary" onclick="abrirCadastroEquipamento()">➕ Adicionar equipamento</button>
+            <button class="btn btn-secondary" onclick="navegar('fornecedores')">🏬 Fornecedores</button>
+          ` : `
+            <button class="btn btn-primary" onclick="navegar('devolucao')">↩️ Devolução de equipamento</button>
+            <button class="btn btn-secondary" onclick="alert('Funcionalidade futura: solicitar equipamento ao escritório.')">📨 Solicitar equipamento</button>
+          `}
+        </div>
+      `;
+
+      return `
+        <h1 class="titulo">🏗️ LOCAÇÃO CONSTRUTORA</h1>
+        ${renderRoleSelector()}
+        ${finCard}
+        ${cardsFornec}
+        ${resumoTiposCard}
+        ${exportCard}
+        ${alertaCard}
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-number blue">${appData.equipamentos.length}</div>
+            <div style="font-size:11px;">Equip.</div>
+          </div>
+          <div class="metric">
+            <div class="metric-number green">${appData.equipamentos.filter(e => e.status === 'disponivel').length}</div>
+            <div style="font-size:11px;">Disponíveis</div>
+          </div>
+          <div class="metric">
+            <div class="metric-number blue">${appData.obras.length}</div>
+            <div style="font-size:11px;">Obras</div>
+          </div>
+        </div>
+        ${actionsCard}
+      `;
+    }
+
+    function renderObras() {
+      const hoje = new Date();
+
+      const obrasHtml = appData.obras.map(o => {
+        const eqObra = appData.equipamentos.filter(e => e.obraId === o.id);
+        let custoObra = 0;
+
+        const listaEquip = eqObra.map(eq => {
+          let diasUsados = 0;
+          let diasRest = '-';
+          let custoAcum = 0;
+          if (eq.dataInicio && eq.dataFim) {
+            const inicio = new Date(eq.dataInicio);
+            const fim = new Date(eq.dataFim);
+            const usado = Math.max(0, Math.min(hoje, fim) - inicio);
+            diasUsados = Math.ceil(usado / (1000*60*60*24));
+            const rest = Math.ceil((fim - hoje) / (1000*60*60*24));
+            diasRest = rest >= 0 ? rest : 0;
+            custoAcum = diasUsados * eq.valorDiario;
+            custoObra += custoAcum;
+          }
+          return `
+            <div class="equip-obra">
+              <span><strong>${eq.nome}</strong> (${eq.serie})</span>
+              <span>Status: ${eq.status.toUpperCase()}${diasRest !== '-' ? ` – vence em ${diasRest} dia(s)` : ''}</span>
+              <span>Custo acumulado: R$ ${custoAcum.toLocaleString()}</span>
+              ${eq.status === 'alocado' ? `
+                <button class="btn btn-secondary" style="margin-top:4px;font-size:11px;padding:6px;"
+                  onclick="iniciarDevolucao(${eq.id})">
+                  ↩️ Devolver equipamento
+                </button>
+              ` : ''}
+            </div>
+          `;
+        }).join('') || '<p style="font-size:11px;margin-top:4px;">Sem equipamentos alocados.</p>';
+
+        return `
+          <div class="list-item">
+            <h4>${o.nome}</h4>
+            <p><strong>CNPJ:</strong> ${o.cnpj || '-'}</p>
+            <p>${o.endereco}</p>
+            <p><strong>Responsável:</strong> ${o.responsavel}</p>
+            <p><strong>Duração prevista:</strong> ${o.duracaoDias || 0} dia(s)</p>
+            <span class="pill">Status: ${o.status}</span>
+            <p style="font-size:12px;margin-top:6px;"><strong>Custo locação (estimado):</strong> R$ ${custoObra.toLocaleString()}</p>
+            <div class="section-title">Equipamentos na obra</div>
+            ${listaEquip}
+            ${currentRole === 'admin' ? `
+              <button class="btn btn-secondary" style="margin-top:6px;" onclick="excluirObra(${o.id})">🗑️ Excluir obra</button>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+
+      return `
+        <h1 class="titulo">🏢 Obras</h1>
+        ${renderRoleSelector()}
+        <div class="card">
+          ${currentRole === 'admin' ? `
+            <button class="btn btn-primary" onclick="adicionarObra()">+ Nova obra</button>
+          ` : `
+            <div class="disabled-text">Engenheiro visualiza status e equipamentos por obra.</div>
+          `}
+        </div>
+        ${obrasHtml}
+      `;
+    }
+
+    function renderEquipamentos() {
+      return `
+        <h1 class="titulo">🔧 Equipamentos</h1>
+        ${renderRoleSelector()}
+        <div class="card">
+          ${currentRole === 'admin' ? `
+            <button class="btn btn-primary" onclick="abrirCadastroEquipamento()">+ Novo equipamento</button>
+          ` : `
+            <div class="disabled-text">Engenheiro visualiza equipamentos e status.</div>
+          `}
+        </div>
+        ${appData.equipamentos.map(eq => {
+          const forn = getFornecedor(eq.fornecedorId);
+          const unidade = eq.tipoCobranca === 'semanal' ? 'semana' :
+                          eq.tipoCobranca === 'mensal'  ? 'mês'    : 'dia';
+
+          const podeConfigurar = currentRole === 'admin' && eq.status === 'disponivel';
+
+          return `
+            <div class="list-item" ${podeConfigurar ? `onclick="configurarAlocacao(${eq.id})"` : ''}>
+              <h4>${eq.nome}</h4>
+              <p>ID: ${eq.id}</p>
+              <p>Tipo: ${eq.tipo || '-'}</p>
+              <p>Série: ${eq.serie}</p>
+              <p>Valor: R$ ${eq.valorDiario} / ${unidade}</p>
+              <p>Tipo locação: ${eq.tipoCobranca || 'diaria'}</p>
+              <p>Obra: ${eq.obraId ? getObraNome(eq.obraId) : '-'}</p>
+              ${eq.fotoUrl ? `<p>Foto: ${eq.fotoUrl}</p>` : ''}
+              ${eq.obs ? `<p>Obs: ${eq.obs}</p>` : ''}
+              ${currentRole === 'admin' ? `<p>Fornecedor: ${forn ? forn.nome : '-'}</p>` : ''}
+              <span class="status-tag status-${eq.status}">${eq.status.toUpperCase()}</span>
+              ${eq.historico && eq.historico.length && currentRole==='admin' ? `
+                <div class="section-title">Histórico</div>
+                <ul class="history">
+                  ${eq.historico.map(h => `
+                    <li>• ${getObraNome(h.obraId)} (${h.inicio} a ${h.fim}) – R$ ${h.custo} – ${h.status}</li>
+                  `).join('')}
+                </ul>
+              ` : ''}
+              ${currentRole === 'admin' ? `
+                <button class="btn btn-secondary" style="margin-top:6px;" onclick="event.stopPropagation(); excluirEquipamento(${eq.id})">🗑️ Excluir equipamento</button>
+              ` : ''}
+            </div>
+          `;
+        }).join('')}
+      `;
+    }
+
+    function renderFornecedores() {
+      return `
+        <h1 class="titulo">🏬 Fornecedores</h1>
+        ${renderRoleSelector()}
+        <div class="card">
+          ${currentRole === 'admin' ? `
+            <button class="btn btn-primary" onclick="adicionarFornecedor()">+ Novo fornecedor</button>
+          ` : `
+            <div class="disabled-text">Engenheiro não edita fornecedores, apenas escritório.</div>
+          `}
+        </div>
+        ${appData.fornecedores.map(f => `
+          <div class="list-item">
+            <h4>${f.nome}</h4>
+            <p>CNPJ: ${f.cnpj}</p>
+            <p>Tel: ${f.telefone}</p>
+            <p>Multa diária: R$ ${f.multaDiaria}</p>
+            ${currentRole === 'admin' ? `
+              <button class="btn btn-secondary" style="margin-top:6px;" onclick="excluirFornecedor(${f.id})">🗑️ Excluir fornecedor</button>
+            ` : ''}
+          </div>
+        `).join('')}
+      `;
+    }
+
+    function excluirEquipamento(id) {
+      if (!confirm('Confirmar exclusão do equipamento?')) return;
+      appData.equipamentos = appData.equipamentos.filter(e => e.id !== id);
+      render();
+    }
+
+    function excluirFornecedor(id) {
+      if (!confirm('Confirmar exclusão do fornecedor? Equipamentos ficarão sem fornecedor.')) return;
+      appData.fornecedores = appData.fornecedores.filter(f => f.id !== id);
+      appData.equipamentos.forEach(e => {
+        if (e.fornecedorId === id) e.fornecedorId = null;
+      });
+      render();
+    }
+
+    // ===== MODAL ALOCAÇÃO =====
+    function abrirAlocacaoModal(eq) {
+      equipamentoEmAlocacaoId = eq.id;
+      modoAlocacaoOuCadastro = 'alocacao';
+      document.getElementById('alocacao-titulo').innerText = 'Alocar equipamento';
+
+      const hoje = new Date();
+      const hojeISO = hoje.toISOString().slice(0,10);
+
+      const tipo = 'diaria';
+      const quantidade = 1;
+      const dataInicio = hojeISO;
+      let dataFim = addDays(dataInicio, 1).toISOString().slice(0,10);
+
+      alocacaoEstado = {
+        tipo,
+        quantidade,
+        dataInicio,
+        dataFim,
+        fornecedorId: eq.fornecedorId || (appData.fornecedores[0]?.id || null),
+        obraId: eq.obraId || (appData.obras[0]?.id || null),
+        valor: eq.valorDiario || 0,
+        fotoUrl: eq.fotoUrl || '',
+        obs: eq.obs || ''
+      };
+
+      const obrasOptions = appData.obras.map(o => `
+        <option value="${o.id}" ${alocacaoEstado.obraId===o.id?'selected':''}>${o.id} - ${o.nome}</option>
+      `).join('');
+
+      const fornOptions = appData.fornecedores.map(f => `
+        <option value="${f.id}" ${alocacaoEstado.fornecedorId===f.id?'selected':''}>${f.id} - ${f.nome}</option>
+      `).join('');
+
+      const html = `
+        <p><strong>${eq.nome}</strong> (ID atual: ${eq.id})</p>
+
+        <label class="section-title">Obra</label>
+        <select id="aloc-obra" style="width:100%;padding:6px;border-radius:8px;border:1px solid #ccc;font-size:12px;">
+          ${obrasOptions}
+        </select>
+
+        <label class="section-title">Fornecedor (locadora)</label>
+        <select id="aloc-forn" style="width:100%;padding:6px;border-radius:8px;border:1px solid #ccc;font-size:12px;">
+          ${fornOptions}
+        </select>
+
+        <label class="section-title">Tipo de locação</label>
+        <div style="display:flex;gap:8px;margin-bottom:4px;">
+          <label style="flex:1;font-size:12px;">
+            <input type="radio" name="aloc-tipo" value="diaria" checked> Diária
+          </label>
+          <label style="flex:1;font-size:12px;">
+            <input type="radio" name="aloc-tipo" value="semanal"> Semanal
+          </label>
+          <label style="flex:1;font-size:12px;">
+            <input type="radio" name="aloc-tipo" value="mensal"> Mensal
+          </label>
+        </div>
+
+        <label class="section-title">Quantidade de períodos</label>
+        <input id="aloc-qtd" type="number" min="1" value="${quantidade}"
+          style="width:100%;padding:6px;border-radius:8px;border:1px solid #ccc;font-size:12px;">
+
+        <label class="section-title">Valor por período (R$)</label>
+        <input id="aloc-valor" type="number" step="0.01" value="${alocacaoEstado.valor}"
+          style="width:100%;padding:6px;border-radius:8px;border:1px solid #ccc;font-size:12px;">
+
+        <label class="section-title">Data início</label>
+        <input id="aloc-inicio" type="date" value="${dataInicio}"
+          style="width:100%;padding:6px;border-radius:8px;border:1px solid #ccc;font-size:12px;">
+
+        <label class="section-title">Data fim (auto)</label>
+        <input id="aloc-fim" type="date" value="${dataFim}" readonly
+          style="width:100%;padding:6px;border-radius:8px;border:1px solid #ccc;font-size:12px;background:#f5f5f5;">
+
+        <label class="section-title">Foto (link ou referência)</label>
+        <input id="aloc-foto" type="text" value="${alocacaoEstado.fotoUrl}"
+          style="width:100%;padding:6px;border-radius:8px;border:1px solid #ccc;font-size:12px;">
+
+        <label class="section-title">Observação</label>
+        <textarea id="aloc-obs" style="width:100%;border-radius:8px;border:1px solid #ccc;font-size:12px;">${alocacaoEstado.obs}</textarea>
+      `;
+
+      document.getElementById('alocacao-conteudo').innerHTML = html;
+
+      document.querySelectorAll('input[name="aloc-tipo"]').forEach(r => {
+        r.onchange = atualizarDataFimAlocacao;
+      });
+      document.getElementById('aloc-qtd').oninput = atualizarDataFimAlocacao;
+      document.getElementById('aloc-inicio').oninput = atualizarDataFimAlocacao;
+
+      document.getElementById('alocacao-modal').style.display = 'flex';
+    }
+
+    // ===== MODAL CADASTRO EQUIPAMENTO =====
+    function abrirCadastroEquipamento() {
+      equipamentoEmAlocacaoId = null;
+      modoAlocacaoOuCadastro = 'cadastro';
+      document.getElementById('alocacao-titulo').innerText = 'Novo equipamento';
+
+      const tiposBase = [
+        'Betoneira','Vibrador','Acabamento Concreto','Plataforma','Guincho',
+        'Transporte Interno','Andaime','Escoramento','Forma','Compactador',
+        'Martelete','Serra','Esmerilhadeira','Furadeira','Gerador',
+        'Compressor','Bomba dágua','Limpeza'
+      ];
+
+      const tipoOptions = tiposBase.map(t => `<option value="${t}">${t}</option>`).join('');
+
+      const fornecedorIdDefault = appData.fornecedores[0]?.id || '';
+      const obraIdDefault = appData.obras[0]?.id || '';
+
+      const html = `
+        <label class="section-title">ID do equipamento</label>
+        <input id="cad-id" type="number" min="1"
+          style="width:100%;padding:6px;border-radius:8px;border:1px solid #ccc;font-size:12px;"
+          placeholder="Ex.: 101">
+
+        <label class="section-title">Tipo</label>
+        <select id="cad-tipo"
+          style="width:100%;padding:6px;border-radius:8px;border:1px solid #ccc;font-size:12px;">
+          <option value="">Selecione...</option>
+          ${tipoOptions}
+        </select>
+
+        <label class="section-title">Nome do equipamento</label>
+        <input id="cad-nome" type="text"
+          style="width:100%;padding:6px;border-radius:8px;border:1px solid #ccc;font-size:12px;"
+          placeholder="Ex.: Betoneira 400L">
+
+        <label class="section-title">Valor por dia (R$)</label>
+        <input id="cad-valor" type="number" step="0.01"
+          style="width:100%;padding:6px;border-radius:8px;border:1px solid #ccc;font-size:12px;"
+          placeholder="Ex.: 120">
+
+        <label class="section-title">Fornecedor padrão</label>
+        <select id="cad-forn"
+          style="width:100%;padding:6px;border-radius:8px;border:1px solid #ccc;font-size:12px;">
+          ${appData.fornecedores.map(f => `
+            <option value="${f.id}" ${f.id===fornecedorIdDefault?'selected':''}>${f.id} - ${f.nome}</option>
+          `).join('')}
+        </select>
+
+        <label class="section-title">Série</label>
+        <input id="cad-serie" type="text"
+          style="width:100%;padding:6px;border-radius:8px;border:1px solid #ccc;font-size:12px;"
+          placeholder="Gerado automático se vazio">
+
+        <label class="section-title">Tipo de locação</label>
+        <select id="cad-tipo-cobr"
+          style="width:100%;padding:6px;border-radius:8px;border:1px solid #ccc;font-size:12px;">
+          <option value="diaria">Diária</option>
+          <option value="semanal">Semanal</option>
+          <option value="mensal">Mensal</option>
+        </select>
+
+        <label class="section-title">Obra inicial (opcional)</label>
+        <select id="cad-obra"
+          style="width:100%;padding:6px;border-radius:8px;border:1px solid #ccc;font-size:12px;">
+          <option value="">Sem obra</option>
+          ${appData.obras.map(o => `
+            <option value="${o.id}" ${o.id===obraIdDefault?'selected':''}>${o.id} - ${o.nome}</option>
+          `).join('')}
+        </select>
+      `;
+
+      document.getElementById('alocacao-conteudo').innerHTML = html;
+      document.getElementById('alocacao-modal').style.display = 'flex';
+    }
+
+    function atualizarDataFimAlocacao() {
+      if (!alocacaoEstado) return;
+      const tipo = document.querySelector('input[name="aloc-tipo"]:checked').value;
+      const qtd = parseInt(document.getElementById('aloc-qtd').value || '1', 10);
+      const inicioStr = document.getElementById('aloc-inicio').value || new Date().toISOString().slice(0,10);
+      const dtInicio = new Date(inicioStr);
+
+      let dtFim = new Date(dtInicio);
+      if (tipo === 'diaria') {
+        dtFim = addDays(dtInicio, qtd);
+      } else if (tipo === 'semanal') {
+        dtFim = addDays(dtInicio, qtd * 7);
+      } else {
+        dtFim.setMonth(dtFim.getMonth() + (isNaN(qtd)?1:qtd));
+      }
+
+      const fimStr = dtFim.toISOString().slice(0,10);
+      document.getElementById('aloc-fim').value = fimStr;
+
+      alocacaoEstado.tipo = tipo;
+      alocacaoEstado.quantidade = qtd;
+      alocacaoEstado.dataInicio = inicioStr;
+      alocacaoEstado.dataFim = fimStr;
+    }
+
+    function fecharAlocacao() {
+      document.getElementById('alocacao-modal').style.display = 'none';
+      equipamentoEmAlocacaoId = null;
+      alocacaoEstado = null;
+      modoAlocacaoOuCadastro = 'alocacao';
+    }
+
+    // decide se está em modo cadastro ou alocação
+    function confirmarAlocacao() {
+      if (modoAlocacaoOuCadastro === 'cadastro') {
+        return confirmarCadastroEquipamento();
+      }
+
+      const eq = appData.equipamentos.find(e => e.id === equipamentoEmAlocacaoId);
+      if (!eq || !alocacaoEstado) return;
+
+      const obraId = parseInt(document.getElementById('aloc-obra').value || '0', 10);
+      const fornId = parseInt(document.getElementById('aloc-forn').value || '0', 10);
+      const valor = parseFloat(document.getElementById('aloc-valor').value || '0');
+
+      eq.obraId = isNaN(obraId) ? null : obraId;
+      eq.fornecedorId = isNaN(fornId) ? null : fornId;
+      eq.tipoCobranca = alocacaoEstado.tipo;
+      eq.valorDiario = isNaN(valor) ? 0 : valor;
+      eq.status = 'alocado';
+      eq.dataInicio = alocacaoEstado.dataInicio;
+      eq.dataFim = alocacaoEstado.dataFim;
+      eq.fotoUrl = document.getElementById('aloc-foto').value || '';
+      eq.obs = document.getElementById('aloc-obs').value || '';
+
+      fecharAlocacao();
+      alert(`Equipamento alocado de ${eq.dataInicio} até ${eq.dataFim}.`);
+      render();
+    }
+
+    function confirmarCadastroEquipamento() {
+      const idStr = document.getElementById('cad-id').value.trim();
+      const tipo = document.getElementById('cad-tipo').value.trim();
+      const nome = document.getElementById('cad-nome').value.trim();
+      const valor = parseFloat(document.getElementById('cad-valor').value || '0');
+      const fornId = parseInt(document.getElementById('cad-forn').value || '0', 10);
+      const serieInput = document.getElementById('cad-serie').value.trim();
+      const tipoCobr = document.getElementById('cad-tipo-cobr').value || 'diaria';
+      const obraIdStr = document.getElementById('cad-obra').value || '';
+
+      if (!idStr || !tipo || !nome) {
+        alert('Preencha ID, Tipo e Nome.');
+        return;
+      }
+
+      const id = parseInt(idStr, 10);
+      if (appData.equipamentos.some(e => e.id === id)) {
+        alert('Já existe equipamento com este ID.');
+        return;
+      }
+
+      const existeMesmoNomeTipo = appData.equipamentos.some(e =>
+        e.nome.toLowerCase() === nome.toLowerCase() &&
+        (e.tipo || '').toLowerCase() === tipo.toLowerCase()
+      );
+      if (existeMesmoNomeTipo) {
+        alert('Já existe equipamento com este NOME e TIPO.');
+        return;
+      }
+
+      const serie = serieInput || (tipo.substring(0,2).toUpperCase() + String(Date.now()).slice(-4));
+
+      const novo = {
+        id,
+        nome,
+        tipo,
+        valorDiario: isNaN(valor) ? 0 : valor,
+        status: obraIdStr ? 'alocado' : 'disponivel',
+        obraId: obraIdStr ? parseInt(obraIdStr, 10) : null,
+        serie,
+        fornecedorId: isNaN(fornId) ? null : fornId,
+        tipoCobranca: tipoCobr,
+        fotoUrl: '',
+        obs: '',
+        historico: []
+      };
+
+      appData.equipamentos.push(novo);
+      fecharAlocacao();
+      alert('Equipamento cadastrado com sucesso.');
+      render();
+    }
+
+    function configurarAlocacao(idEquip) {
+      const eq = appData.equipamentos.find(e => e.id === idEquip);
+      if (!eq) return;
+      abrirAlocacaoModal(eq);
+    }
+
+    function iniciarDevolucao(equipId) {
+      equipamentoEmDevolucaoId = equipId;
+      checklist = { completo: false, limpo: false, horimetro: false, foto: false, assinatura: false };
+      checklistObs = '';
+      navegar('checklist');
+    }
+
+    function renderChecklist() {
+      const eqSel = appData.equipamentos.find(e => e.id === equipamentoEmDevolucaoId) || null;
+      const obraNomeSel = eqSel && eqSel.obraId ? getObraNome(eqSel.obraId) : '-';
+      const todosOk = Object.values(checklist).every(v => v);
+
+      return `
+        <h1 class="titulo">✅ Checklist devolução</h1>
+        ${renderRoleSelector()}
+        <div class="card">
+          <h3>${eqSel ? eqSel.nome : '-'} – ${obraNomeSel}</h3>
+          <div class="checklist-item ${checklist.completo ? 'checked':''}" onclick="toggleCheck('completo')">
+            <div class="check-mark">${checklist.completo ? '✓':''}</div>
+            <div>Equipamento completo (cabos, chaves, acessórios)</div>
+          </div>
+          <div class="checklist-item ${checklist.limpo ? 'checked':''}" onclick="toggleCheck('limpo')">
+            <div class="check-mark">${checklist.limpo ? '✓':''}</div>
+            <div>Limpo (sem restos de concreto)</div>
+          </div>
+          <div class="checklist-item ${checklist.horimetro ? 'checked':''}" onclick="toggleCheck('horimetro')">
+            <div class="check-mark">${checklist.horimetro ? '✓':''}</div>
+            <div>Horímetro/uso registrado</div>
+          </div>
+          <div class="checklist-item ${checklist.foto ? 'checked':''}" onclick="toggleCheck('foto')">
+            <div class="check-mark">${checklist.foto ? '✓':''}</div>
+            <div>Fotos da condição final tiradas</div>
+          </div>
+          <div class="checklist-item ${checklist.assinatura ? 'checked':''}" onclick="toggleCheck('assinatura')">
+            <div class="check-mark">${checklist.assinatura ? '✓':''}</div>
+            <div>Assinatura do responsável pela obra</div>
+          </div>
+
+          <div class="section-title">Observações (avarias, faltas, etc.)</div>
+          <textarea placeholder="Ex.: Falta pino de trava, mangueira rachada..." oninput="atualizarObs(this.value)">${checklistObs}</textarea>
+
+          <button class="btn btn-primary" onclick="confirmarChecklist()" ${!todosOk ? 'disabled style="opacity:0.5;background:#aaa;border:none;"':''}>
+            ${todosOk ? '✅ Confirmar devolução' : 'Complete todos os itens'}
+          </button>
+        </div>
+      `;
+    }
+
+    function renderDevolucao() {
+      const obrasEmAndamento = appData.obras.filter(o => o.status === 'em andamento');
+
+      const blocosObras = obrasEmAndamento.map(o => {
+        const eqAlocados = appData.equipamentos.filter(e =>
+          e.obraId === o.id && e.status === 'alocado'
+        );
+
+        const listaEq = eqAlocados.length ? eqAlocados.map(eq => `
+          <div class="equip-obra">
+            <span><strong>${eq.nome}</strong> (${eq.serie})</span>
+            <span>Status: ${eq.status.toUpperCase()}</span>
+            <button class="btn btn-secondary"
+              style="margin-top:4px;font-size:11px;padding:6px;"
+              onclick="iniciarChecklistDevolucao(${eq.id})">
+              ↩️ Devolver este equipamento
+            </button>
+          </div>
+        `).join('') : `
+          <p style="font-size:11px;margin-top:4px;">Sem equipamentos alocados nesta obra.</p>
+        `;
+
+        return `
+          <div class="list-item">
+            <h4>${o.nome}</h4>
+            <p>${o.endereco}</p>
+            <p><strong>Responsável:</strong> ${o.responsavel}</p>
+            <span class="pill">Status: ${o.status}</span>
+            <div class="section-title" style="margin-top:6px;">Equipamentos alocados</div>
+            ${listaEq}
+          </div>
+        `;
+      }).join('');
+
+      return `
+        <h1 class="titulo">↩️ Devolução de equipamento</h1>
+        ${renderRoleSelector()}
+        <div class="card">
+          <p style="font-size:12px;">
+            Selecione abaixo a obra e o equipamento alocado que deseja devolver.
+          </p>
+        </div>
+        ${blocosObras}
+      `;
+    }
+
+    function adicionarObra() {
+      const nome = prompt('Nome da obra:');
+      if (!nome) return;
+      const cnpj = prompt('CNPJ da obra (empresa contratante):') || '';
+      const endereco = prompt('Endereço:') || 'Endereço não informado';
+      const responsavel = prompt('Responsável:') || 'Responsável não informado';
+      const duracaoStr = prompt('Duração prevista da obra (em dias):', '30') || '0';
+      const duracaoDias = parseInt(duracaoStr, 10);
+
+      appData.obras.push({
+        id: Date.now(),
+        nome,
+        cnpj,
+        endereco,
+        responsavel,
+        duracaoDias: isNaN(duracaoDias) ? 0 : duracaoDias,
+        status: 'em andamento'
+      });
+      render();
+    }
+
+    function adicionarFornecedor() {
+      const nome = prompt('Nome do fornecedor:');
+      if (!nome) return;
+      const cnpj = prompt('CNPJ:') || '';
+      const tel = prompt('Telefone:') || '';
+      const multa = parseInt(prompt('Multa diária (R$):') || '0', 10);
+      appData.fornecedores.push({
+        id: Date.now(),
+        nome,
+        cnpj,
+        telefone: tel,
+        multaDiaria: isNaN(multa) ? 0 : multa
+      });
+      render();
+    }
+
+    function excluirObra(id) {
+      if (!confirm('Confirmar exclusão da obra? Equipamentos vão ficar sem obra vinculada.')) return;
+      appData.obras = appData.obras.filter(o => o.id !== id);
+      appData.equipamentos.forEach(e => {
+        if (e.obraId === id) e.obraId = null;
+      });
+      render();
+    }
+
+    function toggleCheck(campo) {
+      checklist[campo] = !checklist[campo];
+      render();
+    }
+
+    function atualizarObs(v) {
+      checklistObs = v;
+    }
+
+    function confirmarChecklist() {
+      const eq = appData.equipamentos.find(e => e.id === equipamentoEmDevolucaoId);
+      if (eq) {
+        eq.obsDevolucao = checklistObs;
+        eq.status = 'disponivel';
+        eq.obraId = null;
+      }
+      alert('Devolução confirmada!\n\nObservações:\n' + (checklistObs || 'Nenhuma'));
+      checklist = { completo: false, limpo: false, horimetro: false, foto: false, assinatura: false };
+      checklistObs = '';
+      equipamentoEmDevolucaoId = null;
+      navegar('dashboard');
+    }
+
+    function setRole(role) {
+      currentRole = role;
+      render();
+    }
+
+    function navegar(tela) {
+      currentScreen = tela;
+      render();
+    }
+
+    function render() {
+      const app = document.getElementById('app');
+      let html = '';
+      if (currentScreen === 'dashboard') html = renderDashboard();
+      else if (currentScreen === 'obras') html = renderObras();
+      else if (currentScreen === 'equipamentos') html = renderEquipamentos();
+      else if (currentScreen === 'fornecedores') html = renderFornecedores();
+      else if (currentScreen === 'checklist') html = renderChecklist();
+      else if (currentScreen === 'devolucao') html = renderDevolucao();
+
+      app.innerHTML = html + `
+        <nav>
+          <div class="nav-item ${currentScreen==='dashboard'?'active':''}" onclick="navegar('dashboard')">
+            <span>📊</span><span>Dashboard</span>
+          </div>
+          <div class="nav-item ${currentScreen==='obras'?'active':''}" onclick="navegar('obras')">
+            <span>🏢</span><span>Obras</span>
+          </div>
+          <div class="nav-item ${currentScreen==='equipamentos'?'active':''}" onclick="navegar('equipamentos')">
+            <span>🔧</span><span>Equip.</span>
+          </div>
+          <div class="nav-item ${currentScreen==='fornecedores'?'active':''}" onclick="navegar('fornecedores')">
+            <span>🏬</span><span>Fornec.</span>
+          </div>
+          <!-- Checklist não aparece no menu; só via devolução -->
+        </nav>
+      `;
+    }
+
+    render();
+  </script>
+</body>
+</html>
